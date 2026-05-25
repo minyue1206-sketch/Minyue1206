@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Embroidery T-Shirt Design Tool</title>
+    <title>刺绣T恤设计工具</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -38,100 +38,100 @@
 <body class="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 min-h-screen">
     <div class="container mx-auto px-4 py-8">
         <header class="text-center mb-8">
-            <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">Embroidery T-Shirt Design</h1>
-            <p class="text-blue-200 text-lg">Transform your images into unique embroidery designs</p>
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">刺绣T恤设计工具</h1>
+            <p class="text-blue-200 text-lg">将图片转化为独特的刺绣设计</p>
         </header>
 
         <div class="grid lg:grid-cols-2 gap-8">
             <div class="space-y-6">
                 <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-                    <h2 class="text-2xl font-semibold text-white mb-4">Upload Image</h2>
+                    <h2 class="text-2xl font-semibold text-white mb-4">上传图片</h2>
                     <div id="dropZone" class="drop-zone border-2 border-dashed border-blue-400 rounded-xl p-8 text-center cursor-pointer hover:border-amber-400 transition-all">
                         <div class="text-6xl mb-4">🖼️</div>
-                        <p class="text-blue-200 mb-2">Drag and drop an image here, or click to select</p>
-                        <p class="text-blue-300 text-sm">Supports JPG, PNG, GIF formats</p>
+                        <p class="text-blue-200 mb-2">拖拽图片到这里，或点击选择</p>
+                        <p class="text-blue-300 text-sm">支持 JPG, PNG, GIF 格式</p>
                         <input type="file" id="fileInput" accept="image/*" class="hidden">
                     </div>
                 </div>
 
                 <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-                    <h2 class="text-2xl font-semibold text-white mb-4">Embroidery Templates</h2>
+                    <h2 class="text-2xl font-semibold text-white mb-4">刺绣模板</h2>
                     <div id="templates" class="grid grid-cols-2 md:grid-cols-4 gap-3">
                         <button class="template-btn active bg-white/20 rounded-lg p-4 text-center border-2 border-amber-500" data-template="classic">
                             <div class="text-2xl mb-1">🧵</div>
-                            <span class="text-white text-sm">Classic</span>
+                            <span class="text-white text-sm">经典</span>
                         </button>
                         <button class="template-btn bg-white/10 rounded-lg p-4 text-center border-2 border-transparent hover:border-amber-500" data-template="dense">
                             <div class="text-2xl mb-1">🔷</div>
-                            <span class="text-white text-sm">Dense</span>
+                            <span class="text-white text-sm">密集</span>
                         </button>
                         <button class="template-btn bg-white/10 rounded-lg p-4 text-center border-2 border-transparent hover:border-amber-500" data-template="sparse">
                             <div class="text-2xl mb-1">⭕</div>
-                            <span class="text-white text-sm">Sparse</span>
+                            <span class="text-white text-sm">稀疏</span>
                         </button>
                         <button class="template-btn bg-white/10 rounded-lg p-4 text-center border-2 border-transparent hover:border-amber-500" data-template="cross">
                             <div class="text-2xl mb-1">✖️</div>
-                            <span class="text-white text-sm">Cross</span>
+                            <span class="text-white text-sm">十字</span>
                         </button>
                     </div>
                 </div>
 
                 <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-                    <h2 class="text-2xl font-semibold text-white mb-4">Adjust Parameters</h2>
+                    <h2 class="text-2xl font-semibold text-white mb-4">参数调整</h2>
                     
                     <div class="space-y-4">
                         <div>
-                            <label class="text-white mb-2 block">Stitch Density</label>
+                            <label class="text-white mb-2 block">绣线密度</label>
                             <input type="range" id="density" min="5" max="30" value="15" class="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer">
                             <div class="flex justify-between text-blue-200 text-sm mt-1">
-                                <span>Sparse</span>
+                                <span>稀疏</span>
                                 <span id="densityValue">15</span>
-                                <span>Dense</span>
+                                <span>密集</span>
                             </div>
                         </div>
 
                         <div>
-                            <label class="text-white mb-2 block">T-Shirt Color</label>
+                            <label class="text-white mb-2 block">T恤颜色</label>
                             <div class="flex gap-3">
-                                <button class="color-btn w-10 h-10 rounded-full bg-white border-2 border-amber-500" data-color="#ffffff" title="White"></button>
-                                <button class="color-btn w-10 h-10 rounded-full bg-black border-2 border-transparent hover:border-amber-500" data-color="#000000" title="Black"></button>
-                                <button class="color-btn w-10 h-10 rounded-full bg-red-600 border-2 border-transparent hover:border-amber-500" data-color="#dc2626" title="Red"></button>
-                                <button class="color-btn w-10 h-10 rounded-full bg-blue-600 border-2 border-transparent hover:border-amber-500" data-color="#2563eb" title="Blue"></button>
-                                <button class="color-btn w-10 h-10 rounded-full bg-gray-600 border-2 border-transparent hover:border-amber-500" data-color="#4b5563" title="Gray"></button>
-                                <button class="color-btn w-10 h-10 rounded-full bg-green-600 border-2 border-transparent hover:border-amber-500" data-color="#059669" title="Green"></button>
+                                <button class="color-btn w-10 h-10 rounded-full bg-white border-2 border-amber-500" data-color="#ffffff" title="白色"></button>
+                                <button class="color-btn w-10 h-10 rounded-full bg-black border-2 border-transparent hover:border-amber-500" data-color="#000000" title="黑色"></button>
+                                <button class="color-btn w-10 h-10 rounded-full bg-red-600 border-2 border-transparent hover:border-amber-500" data-color="#dc2626" title="红色"></button>
+                                <button class="color-btn w-10 h-10 rounded-full bg-blue-600 border-2 border-transparent hover:border-amber-500" data-color="#2563eb" title="蓝色"></button>
+                                <button class="color-btn w-10 h-10 rounded-full bg-gray-600 border-2 border-transparent hover:border-amber-500" data-color="#4b5563" title="灰色"></button>
+                                <button class="color-btn w-10 h-10 rounded-full bg-green-600 border-2 border-transparent hover:border-amber-500" data-color="#059669" title="绿色"></button>
                             </div>
                         </div>
 
                         <div>
-                            <label class="text-white mb-2 block">Design Size</label>
+                            <label class="text-white mb-2 block">设计大小</label>
                             <input type="range" id="size" min="30" max="100" value="60" class="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer">
                             <div class="flex justify-between text-blue-200 text-sm mt-1">
-                                <span>Small</span>
+                                <span>小</span>
                                 <span id="sizeValue">60%</span>
-                                <span>Large</span>
+                                <span>大</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-                    <h2 class="text-2xl font-semibold text-white mb-4">Export Design</h2>
+                    <h2 class="text-2xl font-semibold text-white mb-4">导出设计</h2>
                     <button id="exportBtn" class="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold py-4 px-6 rounded-xl transition-all transform hover:scale-[1.02] shadow-lg">
-                        Download Image
+                        下载图片
                     </button>
                 </div>
             </div>
 
             <div class="space-y-6">
                 <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-                    <h2 class="text-2xl font-semibold text-white mb-4">T-Shirt Preview</h2>
+                    <h2 class="text-2xl font-semibold text-white mb-4">T恤预览</h2>
                     <div id="previewContainer" class="relative bg-gray-200 rounded-xl overflow-hidden" style="padding-bottom: 120%;">
                         <canvas id="previewCanvas" class="absolute inset-0 w-full h-full"></canvas>
                     </div>
                 </div>
 
                 <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-                    <h2 class="text-2xl font-semibold text-white mb-4">Embroidery Effect</h2>
+                    <h2 class="text-2xl font-semibold text-white mb-4">刺绣效果</h2>
                     <div class="bg-gray-200 rounded-xl overflow-hidden" style="padding-bottom: 100%;">
                         <canvas id="embroideryCanvas" class="w-full h-full"></canvas>
                     </div>

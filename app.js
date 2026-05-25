@@ -249,7 +249,7 @@ function updatePreview() {
         embroideryCtx.fillStyle = '#6b7280';
         embroideryCtx.font = '16px Inter';
         embroideryCtx.textAlign = 'center';
-        embroideryCtx.fillText('Please upload an image', embroideryWidth/2, embroideryHeight/2);
+        embroideryCtx.fillText('请上传图片', embroideryWidth/2, embroideryHeight/2);
         return;
     }
     
@@ -268,7 +268,7 @@ function updatePreview() {
 
 exportBtn.addEventListener('click', () => {
     if (!state.image) {
-        alert('Please upload an image first!');
+        alert('请先上传图片！');
         return;
     }
     
