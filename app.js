@@ -1,5 +1,3 @@
-
-// 状态管理
 let state = {
     image: null,
     template: 'classic',
@@ -8,7 +6,6 @@ let state = {
     designSize: 60
 };
 
-// DOM元素
 const dropZone = document.getElementById('dropZone');
 const fileInput = document.getElementById('fileInput');
 const previewCanvas = document.getElementById('previewCanvas');
@@ -21,32 +18,30 @@ const sizeValue = document.getElementById('sizeValue');
 const templateBtns = document.querySelectorAll('.template-btn');
 const colorBtns = document.querySelectorAll('.color-btn');
 
-// 初始化
 const previewCtx = previewCanvas.getContext('2d');
 const embroideryCtx = embroideryCanvas.getContext('2d');
 
-// 文件上传处理
-dropZone.addEventListener('click', () =&gt; fileInput.click());
+dropZone.addEventListener('click', () => fileInput.click());
 
-dropZone.addEventListener('dragover', (e) =&gt; {
+dropZone.addEventListener('dragover', (e) => {
     e.preventDefault();
     dropZone.classList.add('drag-over');
 });
 
-dropZone.addEventListener('dragleave', () =&gt; {
+dropZone.addEventListener('dragleave', () => {
     dropZone.classList.remove('drag-over');
 });
 
-dropZone.addEventListener('drop', (e) =&gt; {
+dropZone.addEventListener('drop', (e) => {
     e.preventDefault();
     dropZone.classList.remove('drag-over');
     const file = e.dataTransfer.files[0];
-    if (file &amp;&amp; file.type.startsWith('image/')) {
+    if (file && file.type.startsWith('image/')) {
         loadImage(file);
     }
 });
 
-fileInput.addEventListener('change', (e) =&gt; {
+fileInput.addEventListener('change', (e) => {
     if (e.target.files[0]) {
         loadImage(e.target.files[0]);
     }
@@ -54,9 +49,9 @@ fileInput.addEventListener('change', (e) =&gt; {
 
 function loadImage(file) {
     const reader = new FileReader();
-    reader.onload = (e) =&gt; {
+    reader.onload = (e) => {
         const img = new Image();
-        img.onload = () =&gt; {
+        img.onload = () => {
             state.image = img;
             updatePreview();
         };
@@ -65,10 +60,9 @@ function loadImage(file) {
     reader.readAsDataURL(file);
 }
 
-// 模板选择
-templateBtns.forEach(btn =&gt; {
-    btn.addEventListener('click', () =&gt; {
-        templateBtns.forEach(b =&gt; {
+templateBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        templateBtns.forEach(b => {
             b.classList.remove('active', 'border-amber-500');
             b.classList.add('border-transparent');
         });
@@ -79,10 +73,9 @@ templateBtns.forEach(btn =&gt; {
     });
 });
 
-// T恤颜色选择
-colorBtns.forEach(btn =&gt; {
-    btn.addEventListener('click', () =&gt; {
-        colorBtns.forEach(b =&gt; {
+colorBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        colorBtns.forEach(b => {
             b.classList.remove('border-amber-500');
             b.classList.add('border-transparent');
         });
@@ -93,24 +86,21 @@ colorBtns.forEach(btn =&gt; {
     });
 });
 
-// 滑块事件
-densitySlider.addEventListener('input', (e) =&gt; {
+densitySlider.addEventListener('input', (e) => {
     state.density = parseInt(e.target.value);
     densityValue.textContent = state.density;
     updatePreview();
 });
 
-sizeSlider.addEventListener('input', (e) =&gt; {
+sizeSlider.addEventListener('input', (e) => {
     state.designSize = parseInt(e.target.value);
     sizeValue.textContent = state.designSize + '%';
     updatePreview();
 });
 
-// 绘制T恤
 function drawTShirt(ctx, width, height, color) {
     ctx.fillStyle = color;
     
-    // 绘制T恤主体
     ctx.beginPath();
     ctx.moveTo(width * 0.25, height * 0.15);
     ctx.lineTo(width * 0.1, height * 0.25);
@@ -128,13 +118,11 @@ function drawTShirt(ctx, width, height, color) {
     ctx.closePath();
     ctx.fill();
     
-    // 添加阴影效果
     ctx.strokeStyle = 'rgba(0,0,0,0.1)';
     ctx.lineWidth = 2;
     ctx.stroke();
     
-    // 添加一些纹理
-    for (let i = 0; i &lt; 50; i++) {
+    for (let i = 0; i < 50; i++) {
         ctx.beginPath();
         ctx.strokeStyle = `rgba(0,0,0,${Math.random() * 0.03})`;
         ctx.lineWidth = 1;
@@ -146,12 +134,10 @@ function drawTShirt(ctx, width, height, color) {
     }
 }
 
-// 刺绣效果
 function drawEmbroideryEffect(ctx, image, template, density) {
     const imgWidth = embroideryCanvas.width;
     const imgHeight = embroideryCanvas.height;
     
-    // 绘制原图到临时画布
     const tempCanvas = document.createElement('canvas');
     tempCanvas.width = imgWidth;
     tempCanvas.height = imgHeight;
@@ -165,15 +151,15 @@ function drawEmbroideryEffect(ctx, image, template, density) {
     
     const stitchSize = density;
     
-    for (let y = 0; y &lt; imgHeight; y += stitchSize) {
-        for (let x = 0; x &lt; imgWidth; x += stitchSize) {
+    for (let y = 0; y < imgHeight; y += stitchSize) {
+        for (let x = 0; x < imgWidth; x += stitchSize) {
             const index = (Math.floor(y) * imgWidth + Math.floor(x)) * 4;
             const r = data[index];
             const g = data[index + 1];
             const b = data[index + 2];
             const a = data[index + 3];
             
-            if (a &gt; 0) {
+            if (a > 0) {
                 ctx.fillStyle = `rgba(${r},${g},${b},${a/255})`;
                 
                 switch (template) {
@@ -209,7 +195,7 @@ function drawClassicStitch(ctx, x, y, size) {
 }
 
 function drawDenseStitch(ctx, x, y, size) {
-    for (let i = 0; i &lt; 3; i++) {
+    for (let i = 0; i < 3; i++) {
         ctx.beginPath();
         ctx.arc(x + size/4 + i * size/4, y + size/2, size/5, 0, Math.PI * 2);
         ctx.fill();
@@ -242,7 +228,6 @@ function drawCrossStitch(ctx, x, y, size) {
     ctx.stroke();
 }
 
-// 更新预览
 function updatePreview() {
     const previewWidth = 400;
     const previewHeight = 480;
@@ -264,17 +249,14 @@ function updatePreview() {
         embroideryCtx.fillStyle = '#6b7280';
         embroideryCtx.font = '16px Inter';
         embroideryCtx.textAlign = 'center';
-        embroideryCtx.fillText('请上传图片', embroideryWidth/2, embroideryHeight/2);
+        embroideryCtx.fillText('Please upload an image', embroideryWidth/2, embroideryHeight/2);
         return;
     }
     
-    // 绘制刺绣效果
     drawEmbroideryEffect(embroideryCtx, state.image, state.template, state.density);
     
-    // 绘制T恤预览
     drawTShirt(previewCtx, previewWidth, previewHeight, state.tshirtColor);
     
-    // 将刺绣效果放在T恤上
     const designSize = state.designSize / 100;
     const designWidth = previewWidth * 0.5 * designSize;
     const designHeight = designWidth * (embroideryHeight / embroideryWidth);
@@ -284,10 +266,9 @@ function updatePreview() {
     previewCtx.drawImage(embroideryCanvas, designX, designY, designWidth, designHeight);
 }
 
-// 导出功能
-exportBtn.addEventListener('click', () =&gt; {
+exportBtn.addEventListener('click', () => {
     if (!state.image) {
-        alert('请先上传图片！');
+        alert('Please upload an image first!');
         return;
     }
     
@@ -297,5 +278,4 @@ exportBtn.addEventListener('click', () =&gt; {
     link.click();
 });
 
-// 初始渲染
 updatePreview();
