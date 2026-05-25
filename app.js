@@ -1,7 +1,7 @@
 let state = {
     image: null,
     template: 'classic',
-    density: 15,
+    density: 12,
     tshirtColor: '#ffffff',
     designSize: 60
 };
@@ -118,20 +118,113 @@ function drawTShirt(ctx, width, height, color) {
     ctx.closePath();
     ctx.fill();
     
-    ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+    ctx.strokeStyle = 'rgba(0,0,0,0.15)';
     ctx.lineWidth = 2;
     ctx.stroke();
     
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 100; i++) {
         ctx.beginPath();
-        ctx.strokeStyle = `rgba(0,0,0,${Math.random() * 0.03})`;
-        ctx.lineWidth = 1;
+        ctx.strokeStyle = `rgba(0,0,0,${Math.random() * 0.02})`;
+        ctx.lineWidth = 0.5;
         const x = width * 0.2 + Math.random() * width * 0.6;
         const y = height * 0.25 + Math.random() * height * 0.6;
         ctx.moveTo(x, y);
-        ctx.lineTo(x + Math.random() * 20 - 10, y + Math.random() * 20 - 10);
+        ctx.lineTo(x + Math.random() * 30 - 15, y + Math.random() * 30 - 15);
         ctx.stroke();
     }
+}
+
+function quantizeColor(r, g, b) {
+    const palette = [
+        [0, 0, 0], [255, 255, 255], [128, 128, 128], [192, 192, 192],
+        [128, 0, 0], [255, 0, 0], [0, 128, 0], [0, 255, 0],
+        [128, 128, 0], [255, 255, 0], [0, 0, 128], [0, 0, 255],
+        [128, 0, 128], [255, 0, 255], [0, 128, 128], [0, 255, 255],
+        [255, 165, 0], [255, 192, 203], [139, 69, 19], [245, 245, 220],
+        [255, 215, 0], [230, 230, 250], [152, 251, 152], [173, 216, 230]
+    ];
+    
+    let minDist = Infinity;
+    let bestColor = [r, g, b];
+    
+    for (const color of palette) {
+        const dist = Math.sqrt(
+            Math.pow(r - color[0], 2) +
+            Math.pow(g - color[1], 2) +
+            Math.pow(b - color[2], 2)
+        );
+        if (dist < minDist) {
+            minDist = dist;
+            bestColor = color;
+        }
+    }
+    
+    return bestColor;
+}
+
+function drawSatinStitch(ctx, x, y, width, height, angle, color) {
+    ctx.save();
+    ctx.translate(x + width/2, y + height/2);
+    ctx.rotate(angle);
+    ctx.translate(-width/2, -height/2);
+    
+    const stitchWidth = 3;
+    const numStitches = Math.ceil(width / stitchWidth);
+    
+    for (let i = 0; i < numStitches; i++) {
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        const sx = i * stitchWidth + Math.random() * 0.5;
+        const sy = Math.random() * 1;
+        const ex = sx + Math.random() * 0.5;
+        const ey = height - Math.random() * 1;
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(ex, ey);
+        ctx.stroke();
+    }
+    
+    ctx.restore();
+}
+
+function drawFrenchKnot(ctx, x, y, color, size = 3) {
+    ctx.beginPath();
+    ctx.fillStyle = color;
+    ctx.arc(x, y, size, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+    ctx.lineWidth = 0.5;
+    ctx.arc(x, y, size * 0.7, 0, Math.PI * 2);
+    ctx.stroke();
+}
+
+function drawChainStitch(ctx, x1, y1, x2, y2, color, width = 3) {
+    ctx.beginPath();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const steps = Math.ceil(dist / (width * 2));
+    
+    for (let i = 0; i < steps; i++) {
+        const t = i / steps;
+        const cx = x1 + dx * t + Math.sin(i * 0.5) * width * 0.3;
+        const cy = y1 + dy * t + Math.cos(i * 0.5) * width * 0.3;
+        
+        if (i === 0) {
+            ctx.moveTo(cx, cy);
+        } else {
+            ctx.lineTo(cx, cy);
+        }
+    }
+    ctx.stroke();
 }
 
 function drawEmbroideryEffect(ctx, image, template, density) {
@@ -147,85 +240,193 @@ function drawEmbroideryEffect(ctx, image, template, density) {
     const imageData = tempCtx.getImageData(0, 0, imgWidth, imgHeight);
     const data = imageData.data;
     
-    ctx.clearRect(0, 0, imgWidth, imgHeight);
+    ctx.fillStyle = '#f5f5f5';
+    ctx.fillRect(0, 0, imgWidth, imgHeight);
+    
+    ctx.strokeStyle = 'rgba(0,0,0,0.03)';
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i < 200; i++) {
+        ctx.beginPath();
+        const x = Math.random() * imgWidth;
+        const y = Math.random() * imgHeight;
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + Math.random() * 20 - 10, y + Math.random() * 20 - 10);
+        ctx.stroke();
+    }
     
     const stitchSize = density;
     
-    for (let y = 0; y < imgHeight; y += stitchSize) {
-        for (let x = 0; x < imgWidth; x += stitchSize) {
-            const index = (Math.floor(y) * imgWidth + Math.floor(x)) * 4;
+    switch (template) {
+        case 'classic':
+            drawClassicEmbroidery(ctx, data, imgWidth, imgHeight, stitchSize);
+            break;
+        case 'dense':
+            drawDenseEmbroidery(ctx, data, imgWidth, imgHeight, stitchSize);
+            break;
+        case 'sparse':
+            drawSparseEmbroidery(ctx, data, imgWidth, imgHeight, stitchSize);
+            break;
+        case 'cross':
+            drawCrossStitchEmbroidery(ctx, data, imgWidth, imgHeight, stitchSize);
+            break;
+    }
+    
+    ctx.fillStyle = 'rgba(0,0,0,0.05)';
+    ctx.fillRect(0, 0, imgWidth, imgHeight);
+}
+
+function drawClassicEmbroidery(ctx, data, width, height, stitchSize) {
+    for (let y = 0; y < height; y += stitchSize) {
+        for (let x = 0; x < width; x += stitchSize) {
+            const index = (Math.floor(y) * width + Math.floor(x)) * 4;
             const r = data[index];
             const g = data[index + 1];
             const b = data[index + 2];
             const a = data[index + 3];
             
-            if (a > 0) {
-                ctx.fillStyle = `rgba(${r},${g},${b},${a/255})`;
+            if (a > 50) {
+                const [qr, qg, qb] = quantizeColor(r, g, b);
+                const color = `rgb(${qr},${qg},${qb})`;
                 
-                switch (template) {
-                    case 'classic':
-                        drawClassicStitch(ctx, x, y, stitchSize);
-                        break;
-                    case 'dense':
-                        drawDenseStitch(ctx, x, y, stitchSize);
-                        break;
-                    case 'sparse':
-                        drawSparseStitch(ctx, x, y, stitchSize);
-                        break;
-                    case 'cross':
-                        drawCrossStitch(ctx, x, y, stitchSize);
-                        break;
+                ctx.save();
+                ctx.translate(x + stitchSize/2, y + stitchSize/2);
+                ctx.rotate(Math.PI / 4 + Math.random() * 0.2);
+                
+                ctx.beginPath();
+                ctx.fillStyle = color;
+                ctx.ellipse(0, 0, stitchSize * 0.4, stitchSize * 0.15, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.beginPath();
+                ctx.strokeStyle = `rgba(0,0,0,0.2)`;
+                ctx.lineWidth = 0.5;
+                ctx.ellipse(0, 0, stitchSize * 0.35, stitchSize * 0.12, 0, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                ctx.restore();
+                
+                if (Math.random() > 0.7) {
+                    const highlightColor = `rgba(255,255,255,0.3)`;
+                    ctx.beginPath();
+                    ctx.arc(x + stitchSize * 0.3, y + stitchSize * 0.3, stitchSize * 0.1, 0, Math.PI * 2);
+                    ctx.fillStyle = highlightColor;
+                    ctx.fill();
                 }
             }
         }
     }
 }
 
-function drawClassicStitch(ctx, x, y, size) {
-    ctx.beginPath();
-    ctx.ellipse(x + size/2, y + size/2, size/3, size/6, Math.PI/4, 0, Math.PI * 2);
-    ctx.fill();
-    
-    ctx.beginPath();
-    ctx.strokeStyle = 'rgba(0,0,0,0.2)';
-    ctx.lineWidth = 0.5;
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + size, y + size);
-    ctx.stroke();
-}
-
-function drawDenseStitch(ctx, x, y, size) {
-    for (let i = 0; i < 3; i++) {
-        ctx.beginPath();
-        ctx.arc(x + size/4 + i * size/4, y + size/2, size/5, 0, Math.PI * 2);
-        ctx.fill();
+function drawDenseEmbroidery(ctx, data, width, height, stitchSize) {
+    for (let y = 0; y < height; y += stitchSize * 0.7) {
+        for (let x = 0; x < width; x += stitchSize * 0.7) {
+            const index = (Math.floor(y) * width + Math.floor(x)) * 4;
+            const r = data[index];
+            const g = data[index + 1];
+            const b = data[index + 2];
+            const a = data[index + 3];
+            
+            if (a > 50) {
+                const [qr, qg, qb] = quantizeColor(r, g, b);
+                const color = `rgb(${qr},${qg},${qb})`;
+                
+                for (let i = 0; i < 3; i++) {
+                    const offsetX = (i - 1) * stitchSize * 0.3 + Math.random() * stitchSize * 0.1;
+                    const offsetY = Math.random() * stitchSize * 0.1;
+                    drawFrenchKnot(ctx, x + stitchSize/2 + offsetX, y + stitchSize/2 + offsetY, color, stitchSize * 0.2);
+                }
+            }
+        }
     }
 }
 
-function drawSparseStitch(ctx, x, y, size) {
-    ctx.beginPath();
-    ctx.arc(x + size/2, y + size/2, size/4, 0, Math.PI * 2);
-    ctx.fill();
-    
-    ctx.beginPath();
-    ctx.strokeStyle = 'rgba(0,0,0,0.15)';
-    ctx.lineWidth = 0.5;
-    ctx.arc(x + size/2, y + size/2, size/3, 0, Math.PI * 2);
-    ctx.stroke();
+function drawSparseEmbroidery(ctx, data, width, height, stitchSize) {
+    for (let y = 0; y < height; y += stitchSize * 1.5) {
+        for (let x = 0; x < width; x += stitchSize * 1.5) {
+            const index = (Math.floor(y) * width + Math.floor(x)) * 4;
+            const r = data[index];
+            const g = data[index + 1];
+            const b = data[index + 2];
+            const a = data[index + 3];
+            
+            if (a > 50) {
+                const [qr, qg, qb] = quantizeColor(r, g, b);
+                const color = `rgb(${qr},${qg},${qb})`;
+                
+                drawFrenchKnot(ctx, x + stitchSize/2, y + stitchSize/2, color, stitchSize * 0.35);
+                
+                ctx.beginPath();
+                ctx.strokeStyle = color;
+                ctx.lineWidth = stitchSize * 0.15;
+                ctx.lineCap = 'round';
+                
+                for (let i = 0; i < 6; i++) {
+                    const angle = (i / 6) * Math.PI * 2;
+                    const endX = x + stitchSize/2 + Math.cos(angle) * stitchSize * 0.25;
+                    const endY = y + stitchSize/2 + Math.sin(angle) * stitchSize * 0.25;
+                    ctx.beginPath();
+                    ctx.moveTo(x + stitchSize/2, y + stitchSize/2);
+                    ctx.lineTo(endX, endY);
+                    ctx.stroke();
+                }
+            }
+        }
+    }
 }
 
-function drawCrossStitch(ctx, x, y, size) {
-    ctx.beginPath();
-    ctx.lineWidth = size/4;
-    ctx.lineCap = 'round';
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + size, y + size);
-    ctx.stroke();
+function drawCrossStitchEmbroidery(ctx, data, width, height, stitchSize) {
+    const halfStitch = stitchSize / 2;
     
-    ctx.beginPath();
-    ctx.moveTo(x + size, y);
-    ctx.lineTo(x, y + size);
-    ctx.stroke();
+    for (let y = 0; y < height; y += stitchSize) {
+        for (let x = 0; x < width; x += stitchSize) {
+            const index = (Math.floor(y) * width + Math.floor(x)) * 4;
+            const r = data[index];
+            const g = data[index + 1];
+            const b = data[index + 2];
+            const a = data[index + 3];
+            
+            if (a > 50) {
+                const [qr, qg, qb] = quantizeColor(r, g, b);
+                const color = `rgb(${qr},${qg},${qb})`;
+                
+                ctx.beginPath();
+                ctx.strokeStyle = color;
+                ctx.lineWidth = stitchSize * 0.35;
+                ctx.lineCap = 'round';
+                
+                ctx.moveTo(x + 2, y + 2);
+                ctx.lineTo(x + stitchSize - 2, y + stitchSize - 2);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(x + stitchSize - 2, y + 2);
+                ctx.lineTo(x + 2, y + stitchSize - 2);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+                ctx.lineWidth = stitchSize * 0.15;
+                ctx.moveTo(x + 3, y + 3);
+                ctx.lineTo(x + stitchSize - 3, y + stitchSize - 3);
+                ctx.stroke();
+            }
+        }
+    }
+    
+    ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i <= width; i += stitchSize) {
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i, height);
+        ctx.stroke();
+    }
+    for (let i = 0; i <= height; i += stitchSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, i);
+        ctx.lineTo(width, i);
+        ctx.stroke();
+    }
 }
 
 function updatePreview() {
